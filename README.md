@@ -2,7 +2,7 @@
 
 Historical parking occupancy and traffic forecast data for [Chadstone Shopping Centre](https://www.chadstone.com.au/), Melbourne's premier retail destination.
 
-Collected every **30 minutes** via GitHub Actions cron and committed to this repository for public analysis.
+Collected every **30 minutes** via an external cron service and committed to this repository for public analysis.
 
 ## Data
 
@@ -55,7 +55,7 @@ traffic.filter(pl.col("alert_level") == "RED").group_by("datestamp").agg(
 ## How It Works
 
 - **Source**: Chadstone's public API at `chadstone.com.au/api/parking` and `/api/traffic`
-- **Schedule**: GitHub Actions cron `*/30 * * * *` (every 30 minutes)
+- **Schedule**: An external cron service triggers the scraper via `workflow_dispatch` every 30 minutes. The built-in GitHub Actions `schedule` (`*/30 * * * *`) acts as an unreliable fallback — GitHub schedules are best-effort and often skip ticks at this frequency.
 - **Tool**: Python script using `curl` to bypass TLS fingerprinting blocks
 - **Storage**: Data committed directly to this repo (CSV format)
 
