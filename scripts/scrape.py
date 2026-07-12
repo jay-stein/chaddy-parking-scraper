@@ -1,3 +1,4 @@
+import re
 import subprocess
 import csv
 import json
@@ -12,13 +13,46 @@ TRAFFIC_CSV = os.path.join(DATA_DIR, "traffic.csv")
 PARKING_URL = "https://www.chadstone.com.au/api/parking"
 TRAFFIC_URL = "https://www.chadstone.com.au/api/traffic"
 
-CAR_PARK_MAP = {
+FALLBACK_CAR_PARK_MAP = {
     "616a72f7-85b0-439e-8f65-628a9807ab16": "A",
     "552a29ab-8cd0-4f88-a21d-25cda056538b": "B",
     "fa6fdfcc-ba17-4f56-949b-2d9be220b283": "C",
     "3998a27d-eaeb-4498-87ea-54b7060930e4": "E",
     "80ed54e9-8f85-44f2-adc9-94659820b6d9": "F",
 }
+
+PARKING_PAGE_URL = "https://www.chadstone.com.au/directions/parking"
+
+PAGE_CURL_HEADERS = [
+    "-H", "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
+    "-H", "Accept: text/html",
+]
+
+_MAP_RE = re.compile(r'"parking_region_id":"([^"]+)","parking_region_name":"([A-F] - [^"]+)"')
+
+
+def fetch_car_park_map():
+    """Resolve UUID→letter mapping from the parking directions page.
+    Falls back to FALLBACK_CAR_PARK_MAP if the page cannot be parsed."""
+    try:
+        result = subprocess.run(
+            ["curl", "-s", "--max-time", "15"] + PAGE_CURL_HEADERS + [PARKING_PAGE_URL],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=20,
+        )
+        if result.returncode != 0:
+            raise RuntimeError(f"curl failed with code {result.returncode}")
+        seen = {}
+        for m in _MAP_RE.finditer(result.stdout):
+            uuid, name = m.groups()
+            if uuid not in seen:
+                seen[uuid] = name[0]
+        if not seen:
+            raise ValueError("no parking region mappings found in page")
+        return seen
+    except Exception as e:
+        print(f"WARNING: could not resolve car park map dynamically ({e}), falling back to hardcoded map", file=sys.stderr)
+        return dict(FALLBACK_CAR_PARK_MAP)
 
 CURL_HEADERS = [
     "-H", "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
@@ -46,10 +80,18 @@ def scrape_parking(timestamp):
     data = curl_json(PARKING_URL)
     total_occ = data["totalOccupied"]
     total_vac = data["totalVacant"]
+    car_park_map = fetch_car_park_map()
     rows = []
     for cp in data["occupancy"]:
-        letter = CAR_PARK_MAP.get(cp["id"], "?")
+        letter = car_park_map.get(cp["id"])
+        if letter is None:
+            print(f"WARNING: unknown car park id {cp['id']} — map may be stale", file=sys.stderr)
+            letter = "?"
         rows.append([timestamp, letter, cp["occupied"], cp["vacant"], total_occ, total_vac])
+    seen = {r[1] for r in rows}
+    expected = {"A", "B", "C", "E", "F"}
+    if seen != expected:
+        print(f"WARNING: car park set mismatch. seen={seen} expected={expected}", file=sys.stderr)
     return rows
 
 
