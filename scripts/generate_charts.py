@@ -94,7 +94,7 @@ def chart1_occupancy_over_time(df: pl.DataFrame) -> xy.Chart:
         ),
         xy.tooltip(
             fields=cp_names,
-            title="{x:%a %d %b %Y, %H:%M}",
+            title="{x:%d %b %Y %H:%M}",
             format={name: ",.0f" for name in cp_names},
             style={
                 "background": "var(--tooltip-surface, #1e1e2e)",
