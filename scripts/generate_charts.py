@@ -21,6 +21,36 @@ _DARK_TEXT = "var(--text-dark, #d4d4d8)"
 
 _PALETTE = ["#7c3aed", "#0ea5e9", "#10b981", "#f59e0b", "#ef4444"]
 
+_TIP = {
+    "background": "#ffffff",
+    "color": "#1e293b",
+    "border": "1px solid #e2e8f0",
+    "border-radius": 10,
+    "box-shadow": "0 4px 16px rgba(0,0,0,0.10)",
+    "padding": "10px 14px",
+    "font-size": 14,
+}
+
+_TIP_SLOTS = {
+    "tooltip_title": {
+        "font-weight": 600,
+        "font-size": 13,
+        "color": "#64748b",
+        "margin-bottom": 6,
+        "padding-bottom": 5,
+        "border-bottom": "1px solid #e2e8f0",
+    },
+    "tooltip_row": {
+        "display": "grid",
+        "grid-template-columns": "6rem 1fr",
+        "gap": 8,
+        "padding": "2px 0",
+        "font-size": 14,
+    },
+    "tooltip_label": {"color": "#64748b"},
+    "tooltip_value": {"font-weight": 600, "text-align": "right", "color": "#1e293b"},
+}
+
 _CHART_CLASS = (
     f"bg-[{_SURFACE}] [{_SURFACE[4:-1]}:{_SURFACE[4:-1]}] "
     f"[{_GRID[4:-1]}:{_GRID[4:-1]}] [{_TEXT[4:-1]}:{_TEXT[4:-1]}] "
@@ -96,15 +126,7 @@ def chart1_occupancy_over_time(df: pl.DataFrame) -> xy.Chart:
             fields=cp_names,
             title="{x:%d %b %Y %H:%M}",
             format={name: ",.0f" for name in cp_names},
-            style={
-                "background": "#ffffff",
-                "color": "#1e293b",
-                "border": "1px solid #e2e8f0",
-                "border-radius": 10,
-                "box-shadow": "0 4px 16px rgba(0,0,0,0.10)",
-                "padding": "10px 14px",
-                "font-size": 14,
-            },
+            style=_TIP,
         ),
         xy.theme(
             plot_background=_SURFACE,
@@ -130,29 +152,7 @@ def chart1_occupancy_over_time(df: pl.DataFrame) -> xy.Chart:
         styles={
             "legend_item": {"gap": 6, "padding": 0},
             "legend_swatch": {"width": 22, "height": 3, "border-radius": 999},
-            "tooltip_title": {
-                "font-weight": 600,
-                "font-size": 13,
-                "color": "#64748b",
-                "margin-bottom": 6,
-                "padding-bottom": 5,
-                "border-bottom": "1px solid #e2e8f0",
-            },
-            "tooltip_row": {
-                "display": "grid",
-                "grid-template-columns": "6rem 1fr",
-                "gap": 8,
-                "padding": "2px 0",
-                "font-size": 14,
-            },
-            "tooltip_label": {
-                "color": "#64748b",
-            },
-            "tooltip_value": {
-                "font-weight": 600,
-                "text-align": "right",
-                "color": "#1e293b",
-            },
+            **_TIP_SLOTS,
         },
         class_name=_CHART_CLASS,
         width="100%",
@@ -188,7 +188,11 @@ def chart2_carpark_b_area(df: pl.DataFrame) -> xy.Chart:
             },
         ),
         xy.legend(show=False),
-        xy.tooltip(title="{x:%Y-%m-%d %H:%M}", format={"y": ",.0f"}),
+        xy.tooltip(
+            title="{x:%d %b %Y %H:%M}",
+            format={"y": ",.0f"},
+            style=_TIP,
+        ),
         xy.theme(plot_background=_SURFACE, grid_color=_GRID, text_color=_TEXT),
         xy.x_axis(
             show=False,
@@ -199,6 +203,7 @@ def chart2_carpark_b_area(df: pl.DataFrame) -> xy.Chart:
             grid=True,
             style={"grid_color": _GRID, "grid_width": 1, "grid_opacity": 0.6},
         ),
+        styles=_TIP_SLOTS,
         class_name=_CHART_CLASS,
         width="100%",
         height=420,
@@ -252,7 +257,11 @@ def chart3_peak_hour_bars(df: pl.DataFrame) -> xy.Chart:
             ncols=5,
             style={"background": "transparent", "border": 0, "box-shadow": "none"},
         ),
-        xy.tooltip(title="Hour {x}:00", format={"y": ",.0f"}),
+        xy.tooltip(
+            title="Hour {x}:00",
+            format={"y": ",.0f"},
+            style=_TIP,
+        ),
         xy.theme(plot_background=_SURFACE, grid_color=_GRID, text_color=_TEXT),
         xy.x_axis(
             domain=(-0.6, len(hours) - 0.4),
@@ -268,6 +277,7 @@ def chart3_peak_hour_bars(df: pl.DataFrame) -> xy.Chart:
         styles={
             "legend_item": {"gap": 4, "padding": 0, "font-size": 11},
             "legend_swatch": {"width": 10, "height": 10, "border-radius": 2},
+            **_TIP_SLOTS,
         },
         class_name=_CHART_CLASS,
         width="100%",
@@ -313,7 +323,11 @@ def chart4_horizontal_bars(df: pl.DataFrame) -> xy.Chart:
             loc="upper right",
             style={"background": "transparent", "border": 0, "box-shadow": "none"},
         ),
-        xy.tooltip(title="Car Park {x}", format={"y": ",.0f"}),
+        xy.tooltip(
+            title="Car Park {x}",
+            format={"y": ",.0f"},
+            style=_TIP,
+        ),
         xy.theme(plot_background=_SURFACE, grid_color=_GRID, text_color=_TEXT),
         xy.x_axis(
             show=False,
@@ -326,6 +340,7 @@ def chart4_horizontal_bars(df: pl.DataFrame) -> xy.Chart:
         styles={
             "legend_item": {"gap": 8, "padding": 0},
             "legend_swatch": {"width": 12, "height": 12, "border-radius": 3},
+            **_TIP_SLOTS,
         },
         class_name=_CHART_CLASS,
         width="100%",
@@ -375,7 +390,11 @@ def chart5_weekday_weekend_lines(df: pl.DataFrame) -> xy.Chart:
             loc="upper right",
             style={"background": "transparent", "border": 0, "box-shadow": "none"},
         ),
-        xy.tooltip(title="{x}:00", format={"y": ",.0f"}),
+        xy.tooltip(
+            title="Hour {x}:00",
+            format={"y": ",.0f"},
+            style=_TIP,
+        ),
         xy.theme(plot_background=_SURFACE, grid_color=_GRID, text_color=_TEXT),
         xy.x_axis(
             domain=(0, 23),
@@ -391,6 +410,7 @@ def chart5_weekday_weekend_lines(df: pl.DataFrame) -> xy.Chart:
         styles={
             "legend_swatch": {"width": 28, "height": 3, "border-radius": 999},
             "legend_item": {"gap": 8, "padding": 0},
+            **_TIP_SLOTS,
         },
         class_name=_CHART_CLASS,
         width="100%",
@@ -424,7 +444,11 @@ def chart6_occupancy_vs_total_combo(df: pl.DataFrame) -> xy.Chart:
             loc="upper left",
             style={"background": "transparent", "border": 0, "box-shadow": "none"},
         ),
-        xy.tooltip(title="{x:%Y-%m-%d %H:%M}", format={"y": ",.0f"}),
+        xy.tooltip(
+            title="{x:%d %b %Y %H:%M}",
+            format={"y": ",.0f"},
+            style=_TIP,
+        ),
         xy.theme(plot_background=_SURFACE, grid_color=_GRID, text_color=_TEXT),
         xy.x_axis(
             show=False,
@@ -438,6 +462,7 @@ def chart6_occupancy_vs_total_combo(df: pl.DataFrame) -> xy.Chart:
         styles={
             "legend_swatch": {"width": 16, "height": 16, "border-radius": 3},
             "legend_item": {"gap": 8, "padding": 0},
+            **_TIP_SLOTS,
         },
         class_name=_CHART_CLASS,
         width="100%",
@@ -486,7 +511,11 @@ def chart7_utilization_heatmap(df: pl.DataFrame) -> xy.Chart:
             },
         ),
         xy.legend(show=False),
-        xy.tooltip(title="Car Park {x}", format={"y": ",.0f"}),
+        xy.tooltip(
+            title="Car Park {x}",
+            format={"y": ",.0f"},
+            style=_TIP,
+        ),
         xy.theme(plot_background=_SURFACE, grid_color=_GRID, text_color=_TEXT),
         xy.x_axis(
             domain=(-0.4, len(car_parks) - 0.6),
@@ -500,10 +529,216 @@ def chart7_utilization_heatmap(df: pl.DataFrame) -> xy.Chart:
             grid=True,
             style={"grid_color": _GRID, "grid_width": 1, "grid_opacity": 0.6},
         ),
+        styles=_TIP_SLOTS,
         class_name=_CHART_CLASS,
         width="100%",
         height=400,
         padding=(24, 48, 32, 48),
+    )
+
+
+def chart8_box_distribution(df: pl.DataFrame) -> xy.Chart:
+    """Box chart: occupancy distribution per car park showing spread and outliers."""
+    car_parks = df["car_park"].unique().sort().to_list()
+    x_vals = [cp for cp in car_parks for _ in range(1)]
+    boxes = []
+    for cal_i, cp in enumerate(car_parks):
+        vals = df.filter(pl.col("car_park") == cp)["occupied"].to_list()
+        boxes.append(
+            xy.box(
+                values=vals,
+                x=[cal_i] * len(vals),
+                name=f"Car Park {cp}",
+                color=_PALETTE[cal_i],
+                width=0.36,
+            )
+        )
+
+    return xy.box_chart(
+        *boxes,
+        xy.legend(show=False),
+        xy.tooltip(
+            fields=["min", "q1", "median", "q3", "max"],
+            title="Car Park {x} distribution",
+            labels={
+                "min": "Min",
+                "q1": "Q1",
+                "median": "Median",
+                "q3": "Q3",
+                "max": "Max",
+            },
+            format={f: ",.0f" for f in ["min", "q1", "median", "q3", "max"]},
+            style=_TIP,
+        ),
+        xy.theme(plot_background=_SURFACE, grid_color=_GRID, text_color=_TEXT),
+        xy.x_axis(
+            domain=(-0.5, len(car_parks) - 0.5),
+            tick_values=list(range(len(car_parks))),
+            tick_labels=car_parks,
+            show=False,
+            text=True,
+        ),
+        xy.y_axis(
+            show=False,
+            grid=True,
+            style={"grid_color": _GRID, "grid_width": 1, "grid_opacity": 0.6},
+        ),
+        styles=_TIP_SLOTS,
+        class_name=_CHART_CLASS,
+        width="100%",
+        height=420,
+        padding=(24, 48, 32, 48),
+    )
+
+
+def chart9_scatter_correlation(df: pl.DataFrame) -> xy.Chart:
+    """Scatter chart: occupied vs total_occupied per record, bubble by vacancy."""
+    sample = df.group_by("retrieved_at").agg(
+        pl.first("total_occupied"),
+        pl.sum("occupied").alias("sum_occupied"),
+        pl.sum("vacant").alias("sum_vacant"),
+    ).with_columns(
+        pl.col("sum_vacant").truediv(pl.col("sum_vacant") + pl.col("sum_occupied")).alias("vacancy_pct"),
+        pl.col("retrieved_at").dt.weekday().alias("dow"),
+    )
+    sample = sample.with_columns(
+        pl.when(pl.col("dow") < 6)
+        .then(pl.lit("Weekday"))
+        .otherwise(pl.lit("Weekend"))
+        .alias("day_type")
+    )
+
+    weekday = sample.filter(pl.col("day_type") == "Weekday")
+    weekend = sample.filter(pl.col("day_type") == "Weekend")
+
+    return xy.scatter_chart(
+        xy.scatter(
+            weekday["total_occupied"],
+            weekday["vacancy_pct"],
+            name="Weekday",
+            color="#7c3aed",
+            size=4,
+            opacity=0.55,
+            density=False,
+            stroke="#7c3aed",
+            stroke_width=0.5,
+        ),
+        xy.scatter(
+            weekend["total_occupied"],
+            weekend["vacancy_pct"],
+            name="Weekend",
+            color="#f59e0b",
+            size=4,
+            opacity=0.55,
+            density=False,
+            stroke="#f59e0b",
+            stroke_width=0.5,
+        ),
+        xy.legend(
+            loc="upper right",
+            style={"background": "transparent", "border": 0, "box-shadow": "none"},
+        ),
+        xy.tooltip(
+            title="{x:,.0f} cars occupied",
+            format={"y": ".1%"},
+            labels={"y": "Vacancy rate"},
+            style=_TIP,
+        ),
+        xy.theme(plot_background=_SURFACE, grid_color=_GRID, text_color=_TEXT),
+        xy.x_axis(
+            show=False,
+            grid=True,
+            style={"grid_color": _GRID, "grid_width": 1, "grid_opacity": 0.6},
+        ),
+        xy.y_axis(
+            show=False,
+            grid=True,
+            style={"grid_color": _GRID, "grid_width": 1, "grid_opacity": 0.6},
+        ),
+        styles={
+            "legend_swatch": {"width": 12, "height": 12, "border-radius": 999},
+            "legend_item": {"gap": 8, "padding": 0},
+            **_TIP_SLOTS,
+        },
+        class_name=_CHART_CLASS,
+        width="100%",
+        height=420,
+        padding=(24, 24, 32, 48),
+    )
+
+
+def chart10_heatmap_hour_day(df: pl.DataFrame) -> xy.Chart:
+    """Heatmap: average occupancy by hour of day × day of week."""
+    df_map = df.with_columns(
+        pl.col("retrieved_at").dt.hour().alias("hour"),
+        pl.col("retrieved_at").dt.weekday().alias("dow"),
+    )
+    dow_names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    # Pivot: rows = dow, cols = hour, values = mean occupied
+    agg = df_map.group_by(["dow", "hour"]).agg(
+        pl.mean("occupied").alias("avg_occupied")
+    ).sort(["dow", "hour"])
+
+    matrix = []
+    for d in range(1, 8):
+        row = []
+        for h in range(24):
+            v = agg.filter(pl.col("dow") == d, pl.col("hour") == h)
+            row.append(v["avg_occupied"][0] if v.height else 0)
+        matrix.append(row)
+
+    return xy.heatmap_chart(
+        xy.heatmap(
+            z=matrix,
+            name="Avg occupied",
+            colormap=[
+                (0.0, "#f8edff"),
+                (0.33, "#c4b5fd"),
+                (0.66, "#8b5cf6"),
+                (1.0, "#4c1d95"),
+            ],
+            opacity=0.94,
+        ),
+        xy.colorbar(
+            title="Cars",
+            orientation="horizontal",
+            ticks=[200, 600, 1000, 1400, 1800, 2200, 2600],
+            style={
+                "background": _SURFACE,
+                "color": "#4b5563",
+                "border": "1px solid #e5e7eb",
+                "border-radius": 8,
+                "padding": "8px 10px",
+            },
+        ),
+        xy.tooltip(
+            fields=["y"],
+            title="{x:,.0f} cars (mean)",
+            style=_TIP,
+        ),
+        xy.theme(plot_background=_SURFACE, grid_color=_GRID, text_color=_TEXT),
+        xy.x_axis(
+            show=False,
+            ticks=False,
+            grid=False,
+            text=False,
+        ),
+        xy.y_axis(
+            show=False,
+            ticks=False,
+            grid=False,
+            text=False,
+        ),
+        styles={
+            "colorbar_bar": {"border-radius": 6},
+            "colorbar_tick": {"font-size": 11},
+            "colorbar_title": {"font-weight": 600},
+            **_TIP_SLOTS,
+        },
+        class_name=_CHART_CLASS,
+        width="100%",
+        height=400,
+        padding=(24, 24, 56, 24),
     )
 
 
@@ -534,6 +769,15 @@ def main() -> None:
 
     print("7. Peak occupancy per car park")
     _to_html(chart7_utilization_heatmap(df), "chart7_peaks")
+
+    print("8. Occupancy distribution per car park (box plot)")
+    _to_html(chart8_box_distribution(df), "chart8_box")
+
+    print("9. Occupancy vs vacancy correlation (scatter)")
+    _to_html(chart9_scatter_correlation(df), "chart9_scatter")
+
+    print("10. Occupancy heatmap by hour x day of week")
+    _to_html(chart10_heatmap_hour_day(df), "chart10_heatmap")
 
     print(f"\nDone -- {len(list(OUT.glob('chart*.html')))} HTML files in {OUT}/")
 
