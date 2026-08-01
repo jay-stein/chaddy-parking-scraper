@@ -10,7 +10,7 @@ import polars as pl
 import xy
 
 DATA_URL = "https://github.com/jay-stein/chaddy-parking-scraper/blob/master/data/parking.csv?raw=true"
-OUT = Path("notebooks")
+OUT = Path("charts")
 
 _GRID = "var(--grid, #e4e4e7)"
 _SURFACE = "var(--surface, #ffffff)"
