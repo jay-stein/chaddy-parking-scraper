@@ -69,6 +69,8 @@ def load_data() -> pl.DataFrame:
 def chart1_occupancy_over_time(df: pl.DataFrame) -> xy.Chart:
     """Line chart: all 5 car parks on one plot, clean palette."""
     car_parks = df["car_park"].unique().sort().to_list()
+    cp_names = [f"Car Park {cp}" for cp in car_parks]
+
     lines = []
     for i, cp in enumerate(car_parks):
         sub = df.filter(pl.col("car_park") == cp).sort("retrieved_at")
@@ -76,7 +78,7 @@ def chart1_occupancy_over_time(df: pl.DataFrame) -> xy.Chart:
             xy.line(
                 sub["retrieved_at"],
                 sub["occupied"],
-                name=f"Car Park {cp}",
+                name=cp_names[i],
                 color=_PALETTE[i],
                 width=2,
                 curve="linear",
@@ -90,7 +92,20 @@ def chart1_occupancy_over_time(df: pl.DataFrame) -> xy.Chart:
             ncols=3,
             style={"background": "transparent", "border": 0, "box-shadow": "none"},
         ),
-        xy.tooltip(title="{x:%Y-%m-%d %H:%M}", format={"y": ",.0f"}),
+        xy.tooltip(
+            fields=cp_names,
+            title="{x:%a %d %b %Y, %H:%M}",
+            format={name: ",.0f" for name in cp_names},
+            style={
+                "background": "var(--tooltip-surface, #1e1e2e)",
+                "color": "var(--tooltip-text, #eef2ff)",
+                "border": "1px solid var(--tooltip-border, #3f3f56)",
+                "border-radius": 12,
+                "box-shadow": "0 8px 32px rgba(0,0,0,0.35)",
+                "padding": "12px 16px",
+                "font-size": 14,
+            },
+        ),
         xy.theme(
             plot_background=_SURFACE,
             grid_color=_GRID,
@@ -115,8 +130,36 @@ def chart1_occupancy_over_time(df: pl.DataFrame) -> xy.Chart:
         styles={
             "legend_item": {"gap": 6, "padding": 0},
             "legend_swatch": {"width": 22, "height": 3, "border-radius": 999},
+            "tooltip_title": {
+                "font-weight": 700,
+                "font-size": 15,
+                "margin-bottom": 10,
+                "padding-bottom": 8,
+                "border-bottom": "1px solid var(--tooltip-border, #3f3f56)",
+            },
+            "tooltip_row": {
+                "display": "grid",
+                "grid-template-columns": "6rem 1fr",
+                "gap": 12,
+                "align-items": "baseline",
+                "padding": "3px 0",
+                "font-size": 14,
+            },
+            "tooltip_label": {
+                "color": "var(--tooltip-muted, #94a3b8)",
+                "font-size": 13,
+            },
+            "tooltip_value": {
+                "font-weight": 700,
+                "text-align": "right",
+                "font-size": 14,
+            },
         },
-        class_name=_CHART_CLASS,
+        class_name=(
+            _CHART_CLASS
+            + " [--tooltip-surface:#1e1e2e] [--tooltip-text:#eef2ff]"
+            + " [--tooltip-border:#3f3f56] [--tooltip-muted:#94a3b8]"
+        ),
         width="100%",
         height=420,
         padding=(48, 24, 32, 48),
