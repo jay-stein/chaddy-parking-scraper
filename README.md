@@ -4,6 +4,14 @@ Historical parking occupancy and traffic forecast data for [Chadstone Shopping C
 
 Collected every **30 minutes** via an external cron service and committed to this repository for public analysis.
 
+## Live Charts
+
+See the latest occupancy visualisations, regenerated after every scrape:
+
+### [📊 jay-stein.github.io/chaddy-parking-scraper](https://jay-stein.github.io/chaddy-parking-scraper/)
+
+Ten interactive charts (all car parks over time, hourly patterns, weekday vs weekend, heatmaps and more), deployed to GitHub Pages by `.github/workflows/charts-pages.yml` after each successful scrape — no git commits involved.
+
 ## Data
 
 ### `data/parking.csv`
@@ -58,7 +66,6 @@ traffic.filter(pl.col("alert_level") == "RED").group_by("datestamp").agg(
 - **Schedule**: An external cron service triggers the scraper via `workflow_dispatch` every 30 minutes. The built-in GitHub Actions `schedule` (`*/30 * * * *`) acts as an unreliable fallback — GitHub schedules are best-effort and often skip ticks at this frequency.
 - **Tool**: Python script using `curl` to bypass TLS fingerprinting blocks
 - **Storage**: Data committed directly to this repo (CSV format)
-- **Live charts**: After every successful scrape, `.github/workflows/charts-pages.yml` regenerates the charts from the fresh data and deploys them to GitHub Pages at <https://jay-stein.github.io/chaddy-parking-scraper/> (no git commits involved).
 
 ## Car Park Reference
 
