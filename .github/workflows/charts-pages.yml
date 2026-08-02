@@ -1,0 +1,55 @@
+name: Deploy Charts to GitHub Pages
+
+on:
+  # Refresh the live charts after every successful scrape run.
+  workflow_run:
+    workflows: ["Scrape Chadstone Parking & Traffic"]
+    types: [completed]
+  # Manual refresh.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Queue runs so a 30-min cadence never stacks deployments.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Skip when the triggering scrape failed; always run for manual dispatches.
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+
+      - name: Install chart dependencies
+        run: pip install polars xy
+
+      - name: Regenerate charts from fresh local data
+        env:
+          CHARTS_DATA_URL: data/parking.csv
+        run: python scripts/generate_charts.py
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: charts
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

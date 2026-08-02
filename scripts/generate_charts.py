@@ -4,12 +4,17 @@ Each chart is exported as a self-contained HTML file under notebooks/.
 """
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import polars as pl
 import xy
 
-DATA_URL = "https://github.com/jay-stein/chaddy-parking-scraper/blob/master/data/parking.csv?raw=true"
+# Override with CHARTS_DATA_URL (e.g. "data/parking.csv") to generate from local data.
+DATA_URL = os.environ.get(
+    "CHARTS_DATA_URL",
+    "https://github.com/jay-stein/chaddy-parking-scraper/blob/master/data/parking.csv?raw=true",
+)
 OUT = Path("charts")
 
 _GRID = "var(--grid, #e4e4e7)"
