@@ -81,3 +81,7 @@ traffic.filter(pl.col("alert_level") == "RED").group_by("datestamp").agg(
 ## License
 
 MIT — use the data however you like.
+
+## Disclaimer
+
+This repo is not affiliated with Vicinity Shopping Centre. For the latest info about Chadstone Shopping Centre, go to <https://www.chadstone.com.au/>.
