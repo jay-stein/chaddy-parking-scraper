@@ -58,6 +58,7 @@ traffic.filter(pl.col("alert_level") == "RED").group_by("datestamp").agg(
 - **Schedule**: An external cron service triggers the scraper via `workflow_dispatch` every 30 minutes. The built-in GitHub Actions `schedule` (`*/30 * * * *`) acts as an unreliable fallback — GitHub schedules are best-effort and often skip ticks at this frequency.
 - **Tool**: Python script using `curl` to bypass TLS fingerprinting blocks
 - **Storage**: Data committed directly to this repo (CSV format)
+- **Live charts**: After every successful scrape, `.github/workflows/charts-pages.yml` regenerates the charts from the fresh data and deploys them to GitHub Pages at <https://jay-stein.github.io/chaddy-parking-scraper/> (no git commits involved).
 
 ## Car Park Reference
 

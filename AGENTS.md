@@ -27,11 +27,14 @@ Repo that scrapes Chadstone Shopping Centre parking occupancy + 7-day traffic fo
 
 - `charts/chart1_lines.html` … `chart10_heatmap.html` are the canonical generated set (self-contained HTML via the `xy` package).
 - `charts/carpark_b.html` and `charts/total_occupancy.html` are legacy notebook-era files — don't touch.
+- `charts/index.html` is a static landing page linking the 10 charts.
 - New charts should reuse the shared style constants (`_TIP`, `_CHART_CLASS`, `_PALETTE`, `_QUIET` helpers) at the top of `generate_charts.py`.
+- Live charts are served at <https://jay-stein.github.io/chaddy-parking-scraper/> — deployed by `.github/workflows/charts-pages.yml` after every successful scrape (no git commits involved).
 
 ## CI / Environment
 
 - `.github/workflows/scrape.yml` runs `python scrape.py` with Python 3.12 and **no dependency install** (scrape.py is stdlib-only). It auto-commits `data/` changes and pushes to master.
+- `.github/workflows/charts-pages.yml` regenerates charts from the fresh local `data/parking.csv` (`CHARTS_DATA_URL` env var) and deploys them to GitHub Pages via `workflow_run` on the scrape workflow + `workflow_dispatch`.
 - Local dev: uv-managed Python 3.14 (`.python-version`), deps `polars` + `xy`, dev group `jupyter`.
 - The built-in `schedule` cron is a best-effort fallback; the real trigger is an external cron using `workflow_dispatch`.
 
