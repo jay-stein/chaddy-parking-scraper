@@ -29,7 +29,7 @@ Repo that scrapes Chadstone Shopping Centre parking occupancy + 7-day traffic fo
 - `charts/carpark_b.html` and `charts/total_occupancy.html` are legacy notebook-era files — don't touch.
 - `charts/index.html` is a static landing page linking the 10 charts.
 - New charts should reuse the shared style constants (`_TIP`, `_CHART_CLASS`, `_PALETTE`, `_QUIET` helpers) at the top of `generate_charts.py`.
-- Live charts are served at <https://jay-stein.github.io/chaddy-parking-scraper/> — deployed by `.github/workflows/charts-pages.yml` after every successful scrape (no git commits involved).
+- Live charts are served at <https://jay-stein.github.io/chaddy-parking-scraper/> — regenerated, committed (bot), and deployed by `.github/workflows/charts-pages.yml` after every successful scrape.
 
 ## CI / Environment
 

@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -37,6 +37,18 @@ jobs:
         env:
           CHARTS_DATA_URL: data/parking.csv
         run: python scripts/generate_charts.py
+
+      - name: Commit and push charts
+        run: |
+          git config user.name "chaddy-scraper[bot]"
+          git config user.email "chaddy-scraper[bot]@users.noreply.github.com"
+          git add charts/
+          if git diff --cached --quiet; then
+            echo "No chart changes to commit"
+          else
+            git commit -m "chore(charts): refresh $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
