@@ -10,7 +10,7 @@ See the latest occupancy visualisations, regenerated after every scrape:
 
 ### [📊 jay-stein.github.io/chaddy-parking-scraper](https://jay-stein.github.io/chaddy-parking-scraper/)
 
-Ten interactive charts (all car parks over time, hourly patterns, weekday vs weekend, heatmaps and more), deployed to GitHub Pages by `.github/workflows/charts-pages.yml` after each successful scrape — no git commits involved.
+Ten interactive charts (all car parks over time, hourly patterns, weekday vs weekend, heatmaps and more), regenerated and committed by `.github/workflows/charts-pages.yml` after each successful scrape, then deployed to GitHub Pages.
 
 ## Data
 
